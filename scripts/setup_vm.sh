@@ -7,8 +7,8 @@ SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
 LOG_DIR="$SCRIPT_DIR/../logs"
 LOG_FILE="$LOG_DIR/$(date +%Y%m%d-%H%M_setup_vm.log)"
 
-echo $SCRIPT_DIR
-echo $LOG_DIR
+# echo $SCRIPT_DIR
+# echo $LOG_DIR
 
 source "$(dirname "${BASH_SOURCE[0]}")/helpers/logging.sh"
 
@@ -37,10 +37,10 @@ cleanup() {
 
 # Validate user input
 validate_input() {
-  if ! [[ "$1" =~ [a-zA-Z0-9]{8} ]]; then
-    log INFO "Provided VM name $1 is valid, proceeding with creation."
+  if [[ "$1" =~ ^[a-zA-Z0-9]{1,8}$ ]]; then
+    log INFO "Provided VM name '$1' is valid, proceeding with creation."
   else
-    log ERROR "Provided VM name "$1" is invalid - must be 1-8 alphanumerical characters"
+    log ERROR "Provided VM name '$1' is invalid - must be 1-8 alphanumerical characters"
     exit 1
   fi
 }

@@ -1,0 +1,4 @@
+[2025-05-18 16:46:42] [INFO] Provided VM name 'valid01' is valid, proceeding with creation.
+[2025-05-18 16:46:42] [INFO] Provisioning VM : valid01
+[2025-05-18 16:46:43] [SUCCESS] VM valid01 successfully provisioned!
+[2025-05-18 16:46:50] [ERROR] Provided VM name 'invalid-01' is invalid - must be 1-8 alphanumerical characters
