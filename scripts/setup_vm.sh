@@ -1,6 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
+# Set default variable values
+SCRIPT_VERSION="0.0.2"
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
+LOG_DIR="$SCRIPT_DIR/../logs"
+LOG_FILE="$LOG_DIR/$(date +%Y%m%d-%H%M_setup_vm.log)"
+
+echo $SCRIPT_DIR
+echo $LOG_DIR
+
 source "$(dirname "${BASH_SOURCE[0]}")/helpers/logging.sh"
 
 # Help section
@@ -9,14 +18,50 @@ print_usage() {
   echo "This script provisions a VM."
   echo
   echo "Available flags :"
-  echo "  --help      -> Prints help"
-  echo "  --vm-name   -> Set VM name (required)"
+  echo "  -h         -> Prints help"
+  echo "  -v         -> Set VM name (required) [1-8 alphanumerical characters]"
   echo "Usage :"
-  echo "  var-cleanup.sh [--help|--vm-name <vm-name>]"
+  echo "  var-cleanup.sh [-h|-v <vm-name>]"
   echo
+}
+
+create_vm() {
+  log INFO "Provisioning VM : $1"
+  sleep 1
+  log SUCCESS "VM $1 successfully provisioned!"
+}
+
+cleanup() {
+  echo "Doing cleanup"
 }
 
 # Validate user input
 validate_input() {
-  
+  if ! [[ "$1" =~ [a-zA-Z0-9]{8} ]]; then
+    log INFO "Provided VM name $1 is valid, proceeding with creation."
+  else
+    log ERROR "Provided VM name "$1" is invalid - must be 1-8 alphanumerical characters"
+    exit 1
+  fi
 }
+
+while getopts "v:h" option; do
+  case $option in
+    h) # Display help page
+       print_usage
+       exit;;
+    v) # Set desired VM name to be provisioned
+       if [[ -z "${OPTARG}" ]]; then
+        echo "Please provide a VM name."
+        exit 1
+       else
+        VM_NAME=${OPTARG}
+        validate_input $VM_NAME
+        create_vm $VM_NAME
+       fi;;
+    \?) # Invalid option
+       echo "Error : Invalid option"
+       print_usage
+       exit;;
+  esac
+done

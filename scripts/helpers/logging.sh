@@ -4,11 +4,11 @@
 # and to format the log messages with timestamps.
 # Usage:
 #   source logging.sh
-#   log_info "This is an info message"
-#   log_warning "This is a warning message"
-#   log_error "This is an error message"
-#   log_debug "This is a debug message"
-#   log "INFO" "This is a custom log message"
+#   log INFO "This is a custom log message"
+#   log WARN "This is a warning message"
+#   log ERROR "This is an error message"
+#   log DEBUG "This is a debug message"
+#   log SUCCESS "This is a message to indicate successful VM creation"
 
 log() {
   local level="$1"; shift
