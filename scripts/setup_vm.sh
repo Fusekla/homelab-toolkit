@@ -10,9 +10,7 @@ LOG_FILE="$LOG_DIR/$(date +%Y%m%d-%H%M_setup_vm.log)"
 # Ensure we have log directory present
 mkdir -p "$LOG_DIR"
 
-# echo $SCRIPT_DIR
-# echo $LOG_DIR
-
+# Load helper scripts
 source "$(dirname "${BASH_SOURCE[0]}")/helpers/logging.sh"
 
 # Help section
@@ -28,17 +26,22 @@ print_usage() {
   echo
 }
 
+# create_vm
+# Simulates VM provisioning. Expects one argument : VM name
 create_vm() {
   log INFO "Provisioning VM : $1"
   sleep 1
   log SUCCESS "VM $1 successfully provisioned!"
 }
 
+# cleanup
+# Placeholder for later cleanup function
 cleanup() {
   echo "Doing cleanup"
 }
 
-# Validate user input
+# validate_input
+# Validates is user provided VM name consists of 1-8 alphanumerical characters
 validate_input() {
   if [[ "$1" =~ ^[a-zA-Z0-9]{1,8}$ ]]; then
     log INFO "Provided VM name '$1' is valid, proceeding with creation."
@@ -48,6 +51,7 @@ validate_input() {
   fi
 }
 
+# Collect user provided arguments and validate
 while getopts "v:h" option; do
   case $option in
     h) # Display help page
