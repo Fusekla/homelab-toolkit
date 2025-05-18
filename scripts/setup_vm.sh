@@ -7,6 +7,9 @@ SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
 LOG_DIR="$SCRIPT_DIR/../logs"
 LOG_FILE="$LOG_DIR/$(date +%Y%m%d-%H%M_setup_vm.log)"
 
+# Ensure we have log directory present
+mkdir -p "$LOG_DIR"
+
 # echo $SCRIPT_DIR
 # echo $LOG_DIR
 
@@ -21,7 +24,7 @@ print_usage() {
   echo "  -h         -> Prints help"
   echo "  -v         -> Set VM name (required) [1-8 alphanumerical characters]"
   echo "Usage :"
-  echo "  var-cleanup.sh [-h|-v <vm-name>]"
+  echo "  setup_vm.sh [-h|-v <vm-name>]"
   echo
 }
 
