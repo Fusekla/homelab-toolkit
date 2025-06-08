@@ -6,6 +6,7 @@ SCRIPT_VERSION="0.0.2"
 SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$BASH_SOURCE")")
 LOG_DIR="$SCRIPT_DIR/../logs"
 LOG_FILE="$LOG_DIR/$(date +%Y%m%d-%H%M_setup_vm.log)"
+VM_NAME=""
 
 # Ensure we have log directory present
 mkdir -p "$LOG_DIR"
@@ -19,10 +20,10 @@ print_usage() {
   echo "This script provisions a VM."
   echo
   echo "Available flags :"
-  echo "  -h         -> Prints help"
-  echo "  -v         -> Set VM name (required) [1-8 alphanumerical characters]"
+  echo "  -h|--help         -> Prints help"
+  echo "  -v|--vm-name      -> Set VM name (required) [1-8 alphanumerical characters]"
   echo "Usage :"
-  echo "  setup_vm.sh [-h|-v <vm-name>]"
+  echo "  setup_vm.sh [-h, --help|-v, --vm-name <vm-name>]"
   echo
 }
 
@@ -52,23 +53,37 @@ validate_input() {
 }
 
 # Collect user provided arguments and validate
-while getopts "v:h" option; do
-  case $option in
-    h) # Display help page
-       print_usage
-       exit;;
-    v) # Set desired VM name to be provisioned
-       if [[ -z "${OPTARG}" ]]; then
-        echo "Please provide a VM name."
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h|--help)
+      print_usage
+      exit 0
+      ;;
+    -v|--vm-name)
+      if [[ -n "${2:-}" ]]; then
+        VM_NAME="$2"
+        shift 2
+      else
+        echo "Error: --vm-name requires a value"
         exit 1
-       else
-        VM_NAME=${OPTARG}
-        validate_input $VM_NAME
-        create_vm $VM_NAME
-       fi;;
-    \?) # Invalid option
-       echo "Error : Invalid option"
-       print_usage
-       exit;;
+      fi
+      ;;
+    *)
+      echo "Error: Unknown option: $1"
+      print_usage
+      exit 1
+      ;;
   esac
 done
+
+if [[ -z "$VM_NAME" ]]; then
+  echo "Error: VM name is required"
+  print_usage
+  exit 1
+fi
+
+# Validate provided VM name
+validate_input "$VM_NAME"
+
+# Provision VM
+create_vm "$VM_NAME"
